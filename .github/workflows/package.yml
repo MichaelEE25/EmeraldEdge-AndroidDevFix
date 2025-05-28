@@ -1,0 +1,30 @@
+name: Package PowerShell Script to EXE
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install ps2exe Module
+      run: |
+        Install-Module -Name ps2exe -Force -Scope CurrentUser
+        Import-Module ps2exe
+      shell: powershell
+
+    - name: Package Script to EXE
+      run: |
+        Invoke-ps2exe -inputFile .\EmeraldEdge_AndroidDevFix.ps1 -outputFile .\EmeraldEdge_AndroidDevFix.exe -title "Emerald Edge Android Dev Fix" -description "Fixes ADB, SDK paths, and emulator" -version "1.0.0.0"
+      shell: powershell
+
+    - name: Upload EXE Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: EmeraldEdge_AndroidDevFix
+        path: EmeraldEdge_AndroidDevFix.exe
